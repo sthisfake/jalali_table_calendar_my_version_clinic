@@ -6,7 +6,7 @@ typedef DateChangedCallback(int? year, int? month, int? date);
 
 const String _kDateFormatDefault = 'yyyy-mm-dd';
 
-const double _kDatePickerHeight = 210.0;
+const double _kDatePickerHeight = 400.0;
 const double _kDatePickerTitleHeight = 44.0;
 const double _kDatePickerItemHeight = 36.0;
 const double _kDatePickerFontSize = 18.0;
@@ -379,7 +379,7 @@ class _DatePickerState extends State<_DatePickerComponent> {
                           ? '${index + 1}$monthAppend'
                           : '${_formatMonthComplex(index, format)}$monthAppend',
                       style: TextStyle(
-                          color: Color(0xFF000046),
+                          color: Color.fromARGB(255, 70, 0, 0),
                           fontSize: _kDatePickerFontSize),
                       textAlign: TextAlign.center,
                       softWrap: false,

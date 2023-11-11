@@ -315,9 +315,13 @@ class DayPicker extends StatelessWidget {
 
   List<Widget> _getDayHeaders() {
     final List<Widget> result = <Widget>[];
-    for (String dayHader in dayH) {
+    for (String dayHader in dayShort) {
       result.add(ExcludeSemantics(
-        child: Center(child: Text(dayHader)),
+        child: Center(
+            child: Text(
+          dayHader,
+          style: TextStyle(fontSize: 10),
+        )),
       ));
     }
     return result;
@@ -390,6 +394,23 @@ class DayPicker extends StatelessWidget {
     return ret;
   }
 
+  String numberFormatter(String number) {
+    Map numbers = const {
+      '0': '۰',
+      '1': '۱',
+      '2': '۲',
+      '3': '۳',
+      '4': '۴',
+      '5': '۵',
+      '6': '۶',
+      '7': '۷',
+      '8': '۸',
+      '9': '۹',
+    };
+    numbers.forEach((key, value) => number = number.replaceAll(key, value));
+    return number;
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
@@ -451,23 +472,32 @@ class DayPicker extends StatelessWidget {
                 selectedPersainDate.day == day;
         if (isSelectedDay) {
           // The selected day gets a circle background highlight, and a contrasting text color.
-          itemStyle = themeData.textTheme.bodyMedium
+          itemStyle = themeData.textTheme.bodyLarge
               ?.copyWith(color: themeData.cardColor);
           decoration = BoxDecoration(
-              color: themeData.primaryColor, shape: BoxShape.circle);
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFFF34363), // Start color
+                Color(0xFFFFA3A3), // End color
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderRadius: BorderRadius.circular(10.0),
+          );
         } else if (disabled) {
-          itemStyle = themeData.textTheme.bodyLarge!
-              .copyWith(color: themeData.disabledColor);
+          itemStyle =
+              themeData.textTheme.bodyLarge!.copyWith(color: Color(0xff222222));
         } else if (currentPDate.year == getPearData.year &&
             currentPDate.month == getPearData.month &&
             currentPDate.day == day) {
           // The current day gets a different text color.
-          itemStyle = themeData.textTheme.bodyMedium!
-              .copyWith(color: themeData.primaryColor);
+          itemStyle =
+              themeData.textTheme.bodyLarge!.copyWith(color: Color(0xffF34363));
         } else if (getHolidy.isHoliday) {
           // The current day gets a different text color.
-          itemStyle =
-              themeData.textTheme.bodyMedium!.copyWith(color: Colors.red);
+          // itemStyle =
+          //     themeData.textTheme.bodyMedium!.copyWith(color: Colors.red);
         }
         Widget dayWidget = Container(
           decoration: decoration,
@@ -483,7 +513,7 @@ class DayPicker extends StatelessWidget {
                   '${localizations.formatDecimal(day)}, ${localizations.formatFullDate(dayToBuild)}',
               selected: isSelectedDay,
               child: ExcludeSemantics(
-                child: Text(localizations.formatDecimal(day), style: itemStyle),
+                child: Text(numberFormatter(day.toString()), style: itemStyle),
               ),
             ),
           ),
@@ -514,8 +544,11 @@ class DayPicker extends StatelessWidget {
                 child: Center(
                   child: ExcludeSemantics(
                     child: Text(
-                      "${pdate.monthname}  ${pdate.year}",
-                      style: themeData.textTheme.titleLarge,
+                      "${pdate.monthname}  ${numberFormatter(pdate.year.toString())}",
+                      style: TextStyle(
+                          color: Color(0xff222222),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -732,8 +765,6 @@ class _MonthPickerState extends State<MonthPicker>
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: _kMonthPickerPortraitWidth,
-      height: _kMaxDayPickerHeight,
       child: Stack(
         children: <Widget>[
           Semantics(
@@ -760,13 +791,17 @@ class _MonthPickerState extends State<MonthPicker>
           ),
           PositionedDirectional(
             top: 0.0,
-            start: 8.0,
+            start: 40.0,
             child: Semantics(
               sortKey: _MonthPickerSortKey.previousMonth,
               child: FadeTransition(
                 opacity: _chevronOpacityAnimation,
                 child: IconButton(
-                  icon: const Icon(Icons.chevron_left),
+                  icon: const Icon(
+                    Icons.chevron_left,
+                    size: 30,
+                    color: Color(0xff465A68),
+                  ),
                   tooltip: _isDisplayingFirstMonth
                       ? null
                       : '${localizations.previousMonthTooltip} ${localizations.formatMonthYear(_previousMonthDate)}',
@@ -778,13 +813,17 @@ class _MonthPickerState extends State<MonthPicker>
           ),
           PositionedDirectional(
             top: 0.0,
-            end: 8.0,
+            end: 40.0,
             child: Semantics(
               sortKey: _MonthPickerSortKey.nextMonth,
               child: FadeTransition(
                 opacity: _chevronOpacityAnimation,
                 child: IconButton(
-                  icon: const Icon(Icons.chevron_right),
+                  icon: const Icon(
+                    Icons.chevron_right,
+                    size: 30,
+                    color: Color(0xff465A68),
+                  ),
                   tooltip: _isDisplayingLastMonth
                       ? null
                       : '${localizations.nextMonthTooltip} ${localizations.formatMonthYear(_nextMonthDate)}',
@@ -926,7 +965,8 @@ class _DatePickerDialog extends StatefulWidget {
       this.showTimePicker,
       this.convertToGregorian,
       this.initialTime,
-      this.hore24Format})
+      this.hore24Format,
+      this.width})
       : super(key: key);
 
   final DateTime? initialDate;
@@ -939,6 +979,7 @@ class _DatePickerDialog extends StatefulWidget {
   final bool? showTimePicker;
   final bool? hore24Format;
   final TimeOfDay? initialTime;
+  final double? width;
 
   @override
   _DatePickerDialogState createState() => _DatePickerDialogState();
@@ -1087,7 +1128,10 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
           .replaceAll("nn", "mm")
           .replaceAll("n", "m");
 
-      Navigator.pop(context, Jiffy.parseFromDateTime(_selectedDate!).format(pattern:selectedFormat));
+      Navigator.pop(
+          context,
+          Jiffy.parseFromDateTime(_selectedDate!)
+              .format(pattern: selectedFormat));
     } else {
       Navigator.pop(context, selectpDate.getDate);
     }
@@ -1126,47 +1170,64 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
     final Widget picker = Flexible(
       child: SizedBox(
         height: _kMaxDayPickerHeight,
-        child: _buildPicker(),
+        child: Container(child: _buildPicker()),
       ),
     );
-    final Widget actions = ButtonBar(
+    final Widget actions = Row(
       children: <Widget>[
         TextButton(
-          child: Text("لغو"),
-          onPressed: _handleCancel,
+          child: Text(
+            "تایید",
+            style: TextStyle(color: Color(0xff5B89E0), fontSize: 16),
+          ),
+          onPressed: _handleOk,
         ),
         TextButton(
-          child: Text("تایید"),
-          onPressed: _handleOk,
+          child: Text(
+            "لغو",
+            style: TextStyle(color: Color(0xffF34363), fontSize: 16),
+          ),
+          onPressed: _handleCancel,
         ),
       ],
     );
     final Dialog dialog = Dialog(child: OrientationBuilder(
         builder: (BuildContext context, Orientation orientation) {
-      final Widget header = _DatePickerHeader(
-        selectedDate: _selectedDate!,
-        mode: _mode!,
-        onModeChanged: _handleModeChanged,
-        orientation: orientation,
-      );
       switch (orientation) {
         case Orientation.portrait:
           return SizedBox(
-            width: _kMonthPickerPortraitWidth,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                header,
-                Container(
-                  color: theme.dialogBackgroundColor,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      picker,
-                      actions,
-                    ],
+                // header,
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20.0),
+                    // Set the border radius
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFFF34363), // Start color
+                        Color(0xFFFFA3A3), // End color
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15.0),
+                      color: Color(0xffFFFFFF),
+                    ),
+                    margin: EdgeInsets.all(5),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        picker,
+                        actions,
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -1179,15 +1240,33 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                header,
-                Flexible(
+                // header,
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20.0),
+                    // Set the border radius
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFFF34363), // Start color
+                        Color(0xFFFFA3A3), // End color
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
                   child: Container(
-                    width: _kMonthPickerLandscapeWidth,
-                    color: theme.dialogBackgroundColor,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15.0),
+                      color: Color(0xffFFFFFF),
+                    ),
+                    margin: EdgeInsets.all(5),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[picker, actions],
+                      children: <Widget>[
+                        picker,
+                        actions,
+                      ],
                     ),
                   ),
                 ),

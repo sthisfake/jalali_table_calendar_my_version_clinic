@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:jalali_table_calendar/jalali_table_calendar.dart';
+import '../../jalali_table_calendar_pouya_version.dart';
 import 'package:shamsi_date/shamsi_date.dart';
+import '../../lib/src/jalali_table_calendar_pouya_version.dart';
 
 void main() {
   runApp(new MaterialApp(
@@ -25,8 +26,8 @@ class _State extends State<MyApp> {
   Future _selectDate() async {
     String? picked = await jalaliCalendarPicker(
         context: context,
-        convertToGregorian: false,
-        showTimePicker: true,
+        convertToGregorian: true,
+        showTimePicker: false,
         hore24Format: true);
     if (picked != null) setState(() => _value = picked);
   }
@@ -36,8 +37,6 @@ class _State extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    print(
-        "Parse TO Format ${Gregorian(2019, 02, 20, 00, 19, 54, 000).toJalali()}");
   }
 
   String numberFormatter(String number, bool persianNumber) {
@@ -68,32 +67,37 @@ class _State extends State<MyApp> {
       body: Container(
         child: Column(
           children: <Widget>[
-            Flexible(
+            Container(
+              padding: EdgeInsets.all(20),
               child: JalaliTableCalendar(
+                  showTimePicker: false,
                   context: context,
                   locale: Locale('fa'),
-                  // add the events for each day
                   events: {
-                    today: ['sample event', 66546],
-                    today.add(Duration(days: 1)): [6, 5, 465, 1, 66546],
-                    today.add(Duration(days: 2)): [6, 5, 465, 66546],
+                    today: [],
+                    today.add(Duration(days: 1)): [],
+                    today.add(Duration(days: 2)): []
+                    // today: ['sample event', 66546],
+                    // today.add(Duration(days: 1)): [6, 5, 465, 1, 66546],
+                    // today.add(Duration(days: 2)): [6, 5, 465, 66546],
+                    // today.add(Duration(days: 3)): [],
                   },
                   //make marker for every day that have some events
-                  marker: (date, events) {
-                    return Positioned(
-                      left: 0,
-                      top: -3,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.blue[200], shape: BoxShape.circle),
-                        padding: const EdgeInsets.all(6.0),
-                        child: Center(
-                          child: Text(numberFormatter(
-                              (events?.length).toString(), true)),
-                        ),
-                      ),
-                    );
-                  },
+                  // marker: (date, events) {
+                  //   return Positioned(
+                  //     left: 0,
+                  //     top: 0,
+                  //     child: Container(
+                  //       decoration: BoxDecoration(
+                  //           color: Colors.blue[200], shape: BoxShape.circle),
+                  //       padding: const EdgeInsets.all(6.0),
+                  //       child: Center(
+                  //         child: Text(numberFormatter(
+                  //             (events?.length).toString(), true)),
+                  //       ),
+                  //     ),
+                  //   );
+                  // },
                   onMonthChanged: (DateTime date) {
                     print(date);
                   },
@@ -101,34 +105,12 @@ class _State extends State<MyApp> {
                     print(selectDate);
                   }),
             ),
-            Text('  مبدّل تاریخ و زمان ,‌ تاریخ هجری شمسی '),
-            Text(' تقویم شمسی '),
-            Text('date picker شمسی '),
             new ElevatedButton(
               onPressed: _selectDate,
               child: new Text('نمایش تقویم'),
             ),
-            new ElevatedButton(
-              onPressed: _showDatePicker,
-              child: new Text('نمایش دیت پیکر'),
-            ),
-            Text(
-              "\nزمان و تاریخ فعلی سیستم :  ${Jalali.now()}",
-              textAlign: TextAlign.center,
-              textDirection: TextDirection.rtl,
-            ),
-            Divider(),
-            Text(
-              "تقویم ",
-              textAlign: TextAlign.center,
-            ),
             Text(
               _value,
-              textAlign: TextAlign.center,
-            ),
-            Divider(),
-            Text(
-              _valuePiker,
               textAlign: TextAlign.center,
             ),
           ],
@@ -152,12 +134,12 @@ class _State extends State<MyApp> {
           style: TextStyle(color: Colors.cyan),
         ),
         dateFormat: _format, onChanged: (year, month, day) {
-          if (year == null || month == null || day == null) return;
+      if (year == null || month == null || day == null) return;
       if (!showTitleActions) {
         _changeDatetime(year, month, day);
       }
     }, onConfirm: (year, month, day) {
-          if (year == null || month == null || day == null) return;
+      if (year == null || month == null || day == null) return;
       _changeDatetime(year, month, day);
       _valuePiker =
           " تاریخ ترکیبی : $_datetime  \n سال : $year \n  ماه :   $month \n  روز :  $day";

@@ -1,4 +1,4 @@
-library jalali_table_calendar;
+library jalali_table_calendar_pouya_version;
 
 export 'src/jalaliCalendarPicker.dart';
 export 'src/DatePicker.dart';

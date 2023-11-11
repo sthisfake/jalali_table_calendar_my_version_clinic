@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
-import 'package:jalali_table_calendar/jalali_table_calendar.dart';
+import 'package:jalali_table_calendar/jalali_table_calendar_pouya_version.dart';
 
 import 'CalendarDayPicker.dart';
 import 'MonthPickerSortKey.dart';
@@ -35,8 +35,7 @@ class CalendarMonthPicker extends StatefulWidget {
     this.marker,
     this.events,
     this.selectableDayPredicate,
-  })
-      : assert(!firstDate.isAfter(lastDate)),
+  })  : assert(!firstDate.isAfter(lastDate)),
         assert(selectedDate.isAfter(firstDate) ||
             selectedDate.isAtSameMomentAs(firstDate)),
         super(key: key);
@@ -74,8 +73,8 @@ class CalendarMonthPicker extends StatefulWidget {
 class _CalendarMonthPickerState extends State<CalendarMonthPicker>
     with SingleTickerProviderStateMixin {
   static final Animatable<double> _chevronOpacityTween =
-  Tween<double>(begin: 1.0, end: 0.0)
-      .chain(CurveTween(curve: Curves.easeInOut));
+      Tween<double>(begin: 1.0, end: 0.0)
+          .chain(CurveTween(curve: Curves.easeInOut));
 
   @override
   void initState() {
@@ -133,10 +132,10 @@ class _CalendarMonthPickerState extends State<CalendarMonthPicker>
   void _updateCurrentDate() {
     _todayDate = DateTime.now();
     final DateTime tomorrow =
-    DateTime(_todayDate.year, _todayDate.month, _todayDate.day + 1);
+        DateTime(_todayDate.year, _todayDate.month, _todayDate.day + 1);
     Duration timeUntilTomorrow = tomorrow.difference(_todayDate);
     timeUntilTomorrow +=
-    const Duration(seconds: 1); // so we don't miss it by rounding
+        const Duration(seconds: 1); // so we don't miss it by rounding
     _timer?.cancel();
     _timer = Timer(timeUntilTomorrow, () {
       setState(() {
@@ -155,10 +154,12 @@ class _CalendarMonthPickerState extends State<CalendarMonthPicker>
   late PersianDate lastDa = PersianDate();
 
   void triggerOnMonthChanged(int monthsToAdd) {
-    selectedDat = DateTime(selectedDat.year, selectedDat.month + monthsToAdd, selectedDat.day);
+    selectedDat = DateTime(
+        selectedDat.year, selectedDat.month + monthsToAdd, selectedDat.day);
     PersianDate da = PersianDate.pDate(gregorian: selectedDat.toString());
     if (lastDa.month != da.month) {
-      this.widget.onMonthChanged(da.jalaliToGregorian(da.year,da.month,da.day,toDateTime: true));
+      this.widget.onMonthChanged(
+          da.jalaliToGregorian(da.year, da.month, da.day, toDateTime: true));
     }
     lastDa = da;
   }
@@ -207,7 +208,7 @@ class _CalendarMonthPickerState extends State<CalendarMonthPicker>
             localizations.formatMonthYear(_nextMonthDate), textDirection);
         _dayPickerController!.nextPage(
             duration:
-            initialized ? kMonthScrollDuration : Duration(milliseconds: 1),
+                initialized ? kMonthScrollDuration : Duration(milliseconds: 1),
             curve: Curves.ease);
       }
     } catch (e) {
@@ -281,36 +282,42 @@ class _CalendarMonthPickerState extends State<CalendarMonthPicker>
         ),
         PositionedDirectional(
           top: 0.0,
-          start: 8.0,
+          start: 60.0,
           child: Semantics(
             sortKey: MonthPickerSortKey.previousMonth,
             child: FadeTransition(
               opacity: _chevronOpacityAnimation,
               child: IconButton(
-                icon: const Icon(Icons.chevron_left),
+                icon: const Icon(
+                  Icons.chevron_left,
+                  size: 30,
+                  color: Color(0xff465A68),
+                ),
                 tooltip: _isDisplayingFirstMonth
                     ? null
-                    : '${localizations.previousMonthTooltip} ${localizations
-                    .formatMonthYear(_previousMonthDate)}',
+                    : '${localizations.previousMonthTooltip} ${localizations.formatMonthYear(_previousMonthDate)}',
                 onPressed:
-                _isDisplayingFirstMonth ? null : _handlePreviousMonth,
+                    _isDisplayingFirstMonth ? null : _handlePreviousMonth,
               ),
             ),
           ),
         ),
         PositionedDirectional(
           top: 0.0,
-          end: 8.0,
+          end: 60.0,
           child: Semantics(
             sortKey: MonthPickerSortKey.nextMonth,
             child: FadeTransition(
               opacity: _chevronOpacityAnimation,
               child: IconButton(
-                icon: const Icon(Icons.chevron_right),
+                icon: const Icon(
+                  Icons.chevron_right,
+                  size: 30,
+                  color: Color(0xff465A68),
+                ),
                 tooltip: _isDisplayingLastMonth
                     ? null
-                    : '${localizations.nextMonthTooltip} ${localizations
-                    .formatMonthYear(_nextMonthDate)}',
+                    : '${localizations.nextMonthTooltip} ${localizations.formatMonthYear(_nextMonthDate)}',
                 onPressed: _isDisplayingLastMonth ? null : _handleNextMonth,
               ),
             ),

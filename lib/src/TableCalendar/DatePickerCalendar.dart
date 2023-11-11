@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
-import 'package:jalali_table_calendar/jalali_table_calendar.dart';
+import 'package:jalali_table_calendar/jalali_table_calendar_pouya_version.dart';
 import 'CalendarDayPicker.dart';
 import 'CalendarMonthPicker.dart';
 import 'CalendarYearPicker.dart';
-
 
 class DatePickerCalendar extends StatefulWidget {
   const DatePickerCalendar({
@@ -125,15 +124,51 @@ class _DatePickerCalendarState extends State<DatePickerCalendar> {
   @override
   Widget build(BuildContext context) {
     final Widget picker = SizedBox(
-      //it's too dirty  i know!!!
-      height: MediaQuery.of(context).size.height-kDayPickerRowHeight-6,
+      //it's too dirty  i know!!! :)))
+      height: MediaQuery.of(context).size.height * 0.5,
       child: _buildWidget(),
     );
     final Widget calendar = OrientationBuilder(
         builder: (BuildContext context, Orientation orientation) {
       switch (orientation) {
         case Orientation.portrait:
-          return picker;
+          return SizedBox(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                // header,
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20.0),
+                    // Set the border radius
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFFF34363), // Start color
+                        Color(0xFFFFA3A3), // End color
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15.0),
+                      color: Color(0xffFFFFFF),
+                    ),
+                    margin: EdgeInsets.all(5),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        picker,
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
         case Orientation.landscape:
           //TODO:create landscape view
           return picker;
@@ -150,7 +185,7 @@ class _DatePickerCalendarState extends State<DatePickerCalendar> {
           key: _pickerKey,
           selectedDate: _selectedDate!,
           onDayChanged: _handleDayChanged,
-          onMonthChanged:_handleMonthChanged,
+          onMonthChanged: _handleMonthChanged,
           marker: widget.marker,
           events: widget.events,
           firstDate: widget.firstDate!,

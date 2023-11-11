@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jalali_table_calendar/jalali_table_calendar.dart';
+import 'package:jalali_table_calendar/jalali_table_calendar_pouya_version.dart';
 
 import 'DayPickerGridDelegate.dart';
 
@@ -138,7 +138,11 @@ class CalendarDayPicker extends StatelessWidget {
       color = dayHeader == 'ج' || dayHeader == 'Su' ? Colors.red : Colors.black;
       result.add(ExcludeSemantics(
         child: Center(
-            child: Text(dayHeader, style: headerStyle.copyWith(color: color))),
+            child: Text(dayHeader,
+                style: TextStyle(
+                    color: Color(0xff444444),
+                    fontSize: 12,
+                    fontWeight: FontWeight.normal))),
       ));
     }
     return result;
@@ -231,7 +235,7 @@ class CalendarDayPicker extends StatelessWidget {
 
   List<String> dayHeader() {
     if (contextLocale == Locale('fa', 'IR') || contextLocale == Locale('fa'))
-      return dayH;
+      return dayShort;
     else
       return dayEn;
   }
@@ -270,6 +274,7 @@ class CalendarDayPicker extends StatelessWidget {
     var startDay = dayShort.indexOf(pDate.weekdayname);
     itemStyle = themeData.textTheme.titleLarge;
     labels.addAll(_getDayHeaders());
+    bool flag = true;
     for (int i = 0; true; i += 1) {
       final int day = i - startDay + 1;
       if (day > daysInMonth) break;
@@ -295,24 +300,83 @@ class CalendarDayPicker extends StatelessWidget {
             selectedPersianDate.year == getPearData.year &&
                 selectedPersianDate.month == getPearData.month &&
                 selectedPersianDate.day == day;
+
+        bool is_bussy_day = events!.containsKey(dayToBuild);
+        if (is_bussy_day == true) {
+          print(dayToBuild);
+        }
+        // if (flag != false) {
+        //   DateTime today = DateTime.now();
+        //   DateTime time_to_check = DateTime(today.year, today.month, today.day);
+        //   bool is_today_bussy = events!.containsKey(time_to_check);
+        //   if (is_today_bussy) {
+        //     print("here");
+        //     itemStyle = themeData.textTheme.bodyLarge?.copyWith(
+        //         color: themeData.cardColor, fontWeight: FontWeight.bold);
+        //     decoration = BoxDecoration(
+        //       gradient: LinearGradient(
+        //         colors: [
+        //           Color(0xFFF34363), // Start color
+        //           Color(0xFFFFA3A3), // End color
+        //         ],
+        //         begin: Alignment.topCenter,
+        //         end: Alignment.bottomCenter,
+        //       ),
+        //       borderRadius: BorderRadius.circular(10.0),
+        //     );
+        //     flag = false;
+        //   } else {
+        //     flag = false;
+        //   }
+        // }
         if (isSelectedDay) {
           // The selected day gets a circle background highlight, and a contrasting text color.
-          itemStyle =
-              itemStyle?.copyWith(color: themeData.scaffoldBackgroundColor);
-          decoration = BoxDecoration(
-            color: themeData.primaryColor,
-            shape: BoxShape.circle,
-          );
+          // itemStyle =
+          //     itemStyle?.copyWith(color: themeData.scaffoldBackgroundColor);
+          // decoration = BoxDecoration(
+          //   color: themeData.primaryColor,
+          //   shape: BoxShape.circle,
+          // itemStyle = itemStyle!.copyWith(color: themeData.disabledColor);
+          // );
         } else if (disabled) {
           itemStyle = itemStyle!.copyWith(color: themeData.disabledColor);
         } else if (currentPDate.year == getPearData.year &&
             currentPDate.month == getPearData.month &&
             currentPDate.day == day) {
+          if (is_bussy_day) {
+            itemStyle = themeData.textTheme.bodyLarge?.copyWith(
+                color: themeData.cardColor, fontWeight: FontWeight.bold);
+            decoration = BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFFF34363), // Start color
+                  Color(0xFFFFA3A3), // End color
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+              borderRadius: BorderRadius.circular(10.0),
+            );
+          }
           // The current day gets a different text color.
-          itemStyle = itemStyle!.copyWith(color: themeData.primaryColor);
+          // itemStyle = itemStyle!.copyWith(color: themeData.primaryColor);
         } else if (getHoliday.isHoliday) {
           // The current day gets a different text color.
-          itemStyle = itemStyle!.copyWith(color: Colors.red);
+          // itemStyle = itemStyle!.copyWith(color: Colors.red);
+        } else if (is_bussy_day) {
+          itemStyle = themeData.textTheme.bodyLarge?.copyWith(
+              color: themeData.cardColor, fontWeight: FontWeight.bold);
+          decoration = BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFFF34363), // Start color
+                Color(0xFFFFA3A3), // End color
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderRadius: BorderRadius.circular(10.0),
+          );
         }
 
         // prepare to events to return to view
@@ -320,27 +384,30 @@ class CalendarDayPicker extends StatelessWidget {
         if (events![dayToBuild] != null) dayEvents = events![dayToBuild];
         //get Marker for day
         Widget? mark = marker != null ? marker!(dayToBuild, dayEvents) : null;
-        Widget dayWidget = Container(
-          decoration: decoration,
-          child: Stack(
-            children: [
-              Center(
-                child: Semantics(
-                  label:
-                      '${localizations.formatDecimal(day)}, ${localizations.formatFullDate(dayToBuild)}',
-                  selected: isSelectedDay,
-                  child: ExcludeSemantics(
-                    child:
-                        Text(numberFormatter(day.toString()), style: itemStyle),
+        Widget dayWidget = Padding(
+          padding: const EdgeInsets.only(left: 1, right: 1),
+          child: Container(
+            decoration: decoration,
+            child: Stack(
+              children: [
+                Center(
+                  child: Semantics(
+                    label:
+                        '${localizations.formatDecimal(day)}, ${localizations.formatFullDate(dayToBuild)}',
+                    selected: isSelectedDay,
+                    child: ExcludeSemantics(
+                      child: Text(numberFormatter(day.toString()),
+                          style: itemStyle),
+                    ),
                   ),
                 ),
-              ),
-              if (marker != null &&
-                  mark != null &&
-                  events != null &&
-                  events![dayToBuild] != null)
-                mark
-            ],
+                if (marker != null &&
+                    mark != null &&
+                    events != null &&
+                    events![dayToBuild] != null)
+                  mark
+              ],
+            ),
           ),
         );
         if (!disabled) {
@@ -367,7 +434,10 @@ class CalendarDayPicker extends StatelessWidget {
                   height: kDayPickerRowHeight,
                   child: Text(
                     "${pDate.monthname}  ${numberFormatter(pDate.year.toString())}",
-                    style: themeData.textTheme.headlineSmall,
+                    style: TextStyle(
+                        color: Color(0xff222222),
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
                 Flexible(
